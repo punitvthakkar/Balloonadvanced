@@ -48,6 +48,10 @@ p, ul {
 ul {
     text-align: left;
     padding-left: 30px;
+    list-style: disc; /* Ensure bullets show */
+}
+li {
+    margin-bottom: 5px; /* Space out list items */
 }
 
 .action-button {
@@ -61,6 +65,7 @@ ul {
     padding: 12px 30px;
     margin: 10px;
     transition: all 0.3s;
+    border: 2px solid transparent; /* For focus outline */
 }
 
 .action-button:hover {
@@ -68,32 +73,47 @@ ul {
     transform: scale(1.05);
 }
 
+.action-button:focus { /* Accessibility */
+    outline: none;
+    border-color: #2c3e50;
+}
+
+
 .action-button:active {
     transform: scale(0.98);
 }
 
-/* Welcome Screen Styles */
-.balloon-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin: 30px 0;
+.action-button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
 }
 
+
+/* Welcome Screen Styles */
 .instructions {
     background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
     border-radius: 10px;
     padding: 20px;
-    margin: 20px 0;
+    margin: 20px auto; /* Center instructions box */
+    max-width: 90%; /* Ensure it fits well */
+    text-align: left; /* Align text left within the box */
+}
+.instructions h2 {
+    text-align: center; /* Center the heading */
+    margin-top: 0;
+}
+.instructions ul {
+     padding-left: 20px; /* Adjust list indent */
 }
 
 .color-hint {
     font-weight: bold;
+    /* Optional: Add a subtle background or border */
+    /* background-color: #e0f7fa; */
+    /* padding: 0 3px; */
 }
-
-.red-text { color: #e74c3c; }
-.blue-text { color: #3498db; }
-.green-text { color: #2ecc71; }
 
 /* Game Screen Styles */
 .game-header {
@@ -101,70 +121,68 @@ ul {
     justify-content: space-between;
     margin-bottom: 20px;
     font-size: 18px;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: 10px;
 }
 
 .balloon-count, .score-display {
-    background-color: #f8f9fa;
+    background-color: #e9ecef;
     border-radius: 10px;
     padding: 10px 15px;
     font-weight: bold;
+    color: #495057;
 }
 
 .balloon-area {
     position: relative;
-    height: 300px;
+    height: 300px; /* Adjust as needed */
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 30px 0;
+    overflow: hidden; /* Prevent oversized balloon breaking layout */
 }
 
 .balloon {
-    width: 100px;
-    height: 120px;
-    background-color: #3498db; /* Default color */
-    border-radius: 50%;
+    width: 80px; /* Start slightly smaller */
+    height: 100px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* More balloon-like shape */
     position: relative;
-    transition: all 0.3s ease;
+    transition: transform 0.2s ease-out, background-color 0.3s ease; /* Faster pump feedback */
+    /* Default background removed, set by JS */
+    /* Add a subtle border for definition */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.15); /* Inner shadow for depth */
 }
 
-.balloon:before {
+.balloon:before { /* Balloon knot */
     content: '';
     width: 10px;
-    height: 25px;
-    background-color: inherit;
+    height: 20px;
+    background-color: inherit; /* Inherits JS-set color */
     position: absolute;
-    bottom: -15px;
+    bottom: -10px; /* Position closer to balloon */
     left: 50%;
     transform: translateX(-50%);
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-radius: 0 0 5px 5px; /* Shape the knot */
+    box-shadow: inherit; /* Inherit inner shadow if needed */
 }
 
-/* Balloon colors */
-.balloon.red {
-    background-color: #e74c3c;
-}
-
-.balloon.blue {
-    background-color: #3498db;
-}
-
-.balloon.green {
-    background-color: #2ecc71;
-}
 
 .pop-effect {
     position: absolute;
-    color: #e74c3c;
-    font-size: 60px;
+    /* Color set by JS */
+    font-size: 70px;
     font-weight: bold;
-    animation: popAnimation 0.5s forwards;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    animation: popAnimation 0.4s ease-out forwards;
+    z-index: 10; /* Ensure it's above hidden balloon */
+    pointer-events: none; /* Prevent interaction */
 }
 
 @keyframes popAnimation {
-    0% { transform: scale(0); opacity: 0; }
-    50% { transform: scale(1.5); opacity: 1; }
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
     100% { transform: scale(1); opacity: 0; }
 }
 
@@ -179,6 +197,7 @@ ul {
     display: flex;
     justify-content: center;
     gap: 20px;
+    flex-wrap: wrap; /* Allow wrapping */
 }
 
 /* Results Screen Styles */
@@ -187,10 +206,11 @@ ul {
     font-weight: bold;
     color: #2c3e50;
     margin: 20px 0;
-    background-color: #f8f9fa;
+    background-color: #e9ecef;
     border-radius: 10px;
-    padding: 15px;
+    padding: 15px 25px;
     display: inline-block;
+    border: 1px solid #ced4da;
 }
 
 .stats-container {
@@ -199,10 +219,13 @@ ul {
 
 .overall-stats {
     background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
     border-radius: 10px;
     padding: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
+.overall-stats h3 { color: #495057; }
+
 
 .color-stats {
     display: flex;
@@ -210,41 +233,69 @@ ul {
     gap: 15px;
     justify-content: center;
 }
+.color-stats h3 {
+    width: 100%; /* Make title span full width */
+    margin-bottom: 10px;
+    color: #495057;
+}
 
 .color-stat {
     flex: 1;
-    min-width: 200px;
+    min-width: 220px; /* Slightly wider */
+    max-width: 250px; /* Prevent excessive stretching */
     border-radius: 10px;
     padding: 15px;
-    color: white;
-}
-
-.red-bg {
-    background-color: rgba(231, 76, 60, 0.9);
-}
-
-.blue-bg {
-    background-color: rgba(52, 152, 219, 0.9);
-}
-
-.green-bg {
-    background-color: rgba(46, 204, 113, 0.9);
+    color: white; /* Text color for colored background */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Improve readability */
+    /* Background color set by JS */
+    transition: background-color 0.3s ease;
 }
 
 .color-label {
     font-weight: bold;
     margin-bottom: 10px;
+    font-size: 1.1em;
+}
+.color-stat div {
+    margin-bottom: 5px; /* Space out stat lines */
+}
+.color-stat span {
+    font-weight: bold;
 }
 
 .assessment {
     background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
     border-radius: 10px;
     padding: 20px;
-    margin: 20px 0;
+    margin: 25px 0;
+    text-align: left;
+}
+.assessment h2 {
+    text-align: center;
+    margin-top: 0;
 }
 
-@media screen and (max-width: 600px) {
+
+@media screen and (max-width: 750px) {
     .color-stats {
         flex-direction: column;
+        align-items: center; /* Center items when stacked */
     }
+    .color-stat {
+        width: 90%; /* Take more width when stacked */
+        max-width: 400px; /* Limit max width */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .screen {
+        padding: 20px;
+    }
+    h1 { font-size: 1.8em; }
+    .balloon-area { height: 250px; }
+    .balloon { width: 60px; height: 80px; }
+    .pop-effect { font-size: 50px; }
+    .final-score { font-size: 28px; }
+    .action-button { font-size: 16px; padding: 10px 20px;}
 }

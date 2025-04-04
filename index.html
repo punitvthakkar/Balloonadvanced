@@ -10,11 +10,7 @@
     <!-- Welcome Screen -->
     <div id="welcome-screen" class="screen">
         <h1>Adaptive Balloon Risk Game</h1>
-        <div class="balloon-container">
-            <div class="balloon red"></div>
-            <div class="balloon blue"></div>
-            <div class="balloon green"></div>
-        </div>
+        <!-- Maybe show the 3 chosen colors dynamically here later -->
         <div class="instructions">
             <h2>How to Play:</h2>
             <p>You'll be presented with a series of balloons, one at a time.</p>
@@ -24,13 +20,13 @@
                 <li><strong>Cash Out:</strong> Banks your current points and moves to the next balloon.</li>
             </ul>
             <p>Be careful! If you pump too much, the balloon will pop and you'll lose points for that balloon.</p>
-            <p><strong>Important:</strong> Different colored balloons have different capacities:</p>
+            <p><strong>The Challenge:</strong> Different <span class="color-hint">colors</span> have different hidden capacities (risk levels - High, Medium, Low).</p>
             <ul>
-                <li><span class="color-hint red-text">Red balloons</span> have lower capacity but are worth the same points per pump.</li>
-                <li><span class="color-hint blue-text">Blue balloons</span> have medium capacity.</li>
-                <li><span class="color-hint green-text">Green balloons</span> have higher capacity.</li>
+                <li>One color pops easily (High Risk).</li>
+                <li>One color has medium capacity (Medium Risk).</li>
+                <li>One color can be pumped many times (Low Risk).</li>
             </ul>
-            <p>Adapt your strategy based on the balloon color to maximize your score!</p>
+            <p><strong>The color-to-risk mapping is RANDOMIZED each game!</strong> Pay attention to how many pumps each color seems to handle to figure out the pattern for *this* game and maximize your score!</p>
         </div>
         <button id="start-button" class="action-button">Start Game</button>
     </div>
@@ -41,14 +37,15 @@
             <div class="balloon-count">Balloon <span id="current-balloon">1</span> of <span id="total-balloons">15</span></div>
             <div class="score-display">Total Score: <span id="total-score">0</span></div>
         </div>
-        
+
         <div class="balloon-area">
+            <!-- Balloon color will be set by style -->
             <div id="game-balloon" class="balloon"></div>
             <div id="pop-effect" class="pop-effect hidden">POP!</div>
         </div>
-        
+
         <div class="current-points">Current Points: <span id="current-points">0</span></div>
-        
+
         <div class="action-buttons">
             <button id="pump-button" class="action-button">Pump</button>
             <button id="cash-button" class="action-button">Cash Out</button>
@@ -59,40 +56,43 @@
     <div id="results-screen" class="screen hidden">
         <h1>Game Results</h1>
         <div class="final-score">Final Score: <span id="final-score">0</span></div>
-        
+
         <div class="stats-container">
             <h2>Your Performance:</h2>
             <div class="overall-stats">
                 <h3>Overall</h3>
                 <div>Success Rate: <span id="overall-success-rate">0%</span></div>
-                <div>Average Pumps: <span id="overall-avg-pumps">0</span></div>
+                <div>Average Pumps (on interacted balloons): <span id="overall-avg-pumps">0</span></div>
             </div>
-            
+
             <div class="color-stats">
-                <h3>By Balloon Color</h3>
-                <div class="color-stat red-bg">
-                    <div class="color-label">Red Balloons (High Risk)</div>
-                    <div>Success Rate: <span id="red-success-rate">0%</span></div>
-                    <div>Average Pumps: <span id="red-avg-pumps">0</span></div>
+                <h3>By Balloon Color (This Game)</h3>
+                <!-- Placeholder 1 -->
+                <div id="color-stat-1" class="color-stat">
+                    <div class="color-label">Color 1 (Risk?)</div>
+                    <div>Success Rate: <span class="color-success-rate">0%</span></div>
+                    <div>Average Pumps: <span class="color-avg-pumps">0</span></div>
                 </div>
-                <div class="color-stat blue-bg">
-                    <div class="color-label">Blue Balloons (Medium Risk)</div>
-                    <div>Success Rate: <span id="blue-success-rate">0%</span></div>
-                    <div>Average Pumps: <span id="blue-avg-pumps">0</span></div>
+                <!-- Placeholder 2 -->
+                <div id="color-stat-2" class="color-stat">
+                    <div class="color-label">Color 2 (Risk?)</div>
+                    <div>Success Rate: <span class="color-success-rate">0%</span></div>
+                    <div>Average Pumps: <span class="color-avg-pumps">0</span></div>
                 </div>
-                <div class="color-stat green-bg">
-                    <div class="color-label">Green Balloons (Low Risk)</div>
-                    <div>Success Rate: <span id="green-success-rate">0%</span></div>
-                    <div>Average Pumps: <span id="green-avg-pumps">0</span></div>
+                <!-- Placeholder 3 -->
+                <div id="color-stat-3" class="color-stat">
+                    <div class="color-label">Color 3 (Risk?)</div>
+                    <div>Success Rate: <span class="color-success-rate">0%</span></div>
+                    <div>Average Pumps: <span class="color-avg-pumps">0</span></div>
                 </div>
             </div>
         </div>
-        
+
         <div class="assessment">
             <h2>Risk Assessment:</h2>
             <p id="risk-assessment">Your risk-taking strategy will be analyzed based on how you adapted to different balloon colors.</p>
         </div>
-        
+
         <button id="play-again-button" class="action-button">Play Again</button>
     </div>
 
