@@ -64,13 +64,9 @@ const elements = {
     finalScoreDisplay: document.getElementById('final-score'),
     overallSuccessRate: document.getElementById('overall-success-rate'),
     overallAvgPumps: document.getElementById('overall-avg-pumps'),
-    // Placeholders for dynamic color stats
-    colorStat1: document.getElementById('color-stat-1'),
-    colorStat2: document.getElementById('color-stat-2'),
-    colorStat3: document.getElementById('color-stat-3'),
-    riskAssessment: document.getElementById('risk-assessment'),
-    // Add references for the instruction hints if needed (optional)
-    // Hints can be updated dynamically based on the current mapping
+    // Dynamic color stats elements
+    colorStats: document.querySelector('.color-stats'),
+    riskAssessment: document.getElementById('risk-assessment')
 };
 
 // Event Listeners
@@ -79,7 +75,10 @@ elements.pumpButton.addEventListener('click', pumpBalloon);
 elements.cashButton.addEventListener('click', cashOut);
 elements.playAgainButton.addEventListener('click', resetGame);
 
-// --- Helper Function ---
+// Initialize game on page load
+document.addEventListener('DOMContentLoaded', initializeGame);
+
+// --- Helper Functions ---
 // Fisher-Yates (Knuth) Shuffle
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -89,6 +88,15 @@ function shuffleArray(array) {
     return array;
 }
 
+// Helper to convert hex to rgba for background transparency
+function hexToRgba(hex, alpha = 1) {
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 // Game Functions
 function initializeGame() {
     // Set total balloons display
@@ -96,8 +104,7 @@ function initializeGame() {
     resetGameState(); // Reset state variables
     assignColorsToRisks(); // Assign random colors to risks for this game
     generateBalloonSequence(); // Generate sequence based on chosen colors
-    // Optional: Update welcome screen hints dynamically if desired
-    // updateWelcomeHints();
+    updateWelcomeScreen(); // Update welcome screen to show the colors without risk info
 }
 
 function resetGameState() {
@@ -157,6 +164,29 @@ function assignColorsToRisks() {
     console.log("Color-Risk Mapping for this game:", gameState.colorRiskMapping); // For debugging
 }
 
+function updateWelcomeScreen() {
+    // Update balloon container with current game colors
+    const balloonContainer = document.querySelector('.balloon-container');
+    balloonContainer.innerHTML = ''; // Clear existing balloons
+    
+    // Add new balloons with the game's colors
+    gameState.currentColorSet.forEach(color => {
+        const balloon = document.createElement('div');
+        balloon.className = 'balloon';
+        balloon.style.backgroundColor = color.hex;
+        balloonContainer.appendChild(balloon);
+    });
+
+    // Update instructions to be more abstract about risk
+    const colorInstructions = document.querySelector('.instructions p:nth-of-type(4) + ul');
+    if (colorInstructions) {
+        colorInstructions.innerHTML = `
+            <li>Each colored balloon has a <strong>different capacity</strong> before popping.</li>
+            <li>The color-to-risk mapping changes each game, so you'll need to discover which colors are safer!</li>
+            <li>Pay attention to how many pumps each color can handle.</li>
+        `;
+    }
+}
 
 function generateBalloonSequence() {
     gameState.balloonSequence = [];
@@ -179,9 +209,18 @@ function generateBalloonSequence() {
 
     // Shuffle the final sequence
     gameState.balloonSequence = shuffleArray(gameState.balloonSequence);
-     console.log("Balloon sequence:", gameState.balloonSequence); // For debugging
+    console.log("Balloon sequence:", gameState.balloonSequence); // For debugging
 }
 
+function changeScreen(screenName) {
+    // Hide all screens
+    for (const screen in screens) {
+        screens[screen].classList.add('hidden');
+    }
+    // Show requested screen
+    screens[screenName].classList.remove('hidden');
+    gameState.currentScreen = screenName;
+}
 
 function startGame() {
     // Ensure randomization happens if starting fresh (e.g., direct load to game)
@@ -228,6 +267,7 @@ function setupNextBalloon() {
     elements.gameBalloon.className = 'balloon'; // Reset classes
     elements.gameBalloon.style.backgroundColor = gameState.currentBalloonColorHex; // Set color directly
     elements.gameBalloon.style.transform = 'scale(1)';
+    elements.gameBalloon.classList.remove('hidden'); // Ensure visible
     elements.popEffect.classList.add('hidden');
 
     // Enable buttons
@@ -322,48 +362,38 @@ function calculateAndDisplayStatistics() {
     elements.overallAvgPumps.textContent = overallAvgPumps.toFixed(1);
 
     // Color-specific statistics using the dynamic color set
-    const colorStatElements = [elements.colorStat1, elements.colorStat2, elements.colorStat3];
-    gameState.currentColorSet.forEach((color, index) => {
-        const statElement = colorStatElements[index];
+    // First clear the color stats container
+    elements.colorStats.innerHTML = '';
+    
+    // Create a new stat card for each color
+    gameState.currentColorSet.forEach(color => {
         const colorStats = gameState.statistics[color.name];
-        const colorTotalBalloons = colorStats.balloonCount;
         const riskProfileKey = gameState.colorRiskMapping[color.name];
         const riskProfileLabel = GAME_CONFIG.riskProfiles[riskProfileKey].label;
-
-        // Find the elements within the stat block
-        const labelElement = statElement.querySelector('.color-label');
-        const successRateElement = statElement.querySelector('.color-success-rate');
-        const avgPumpsElement = statElement.querySelector('.color-avg-pumps');
-
-        if (colorTotalBalloons > 0) {
-            const cashed = colorStats.balloonsCashed;
-            const popped = colorStats.balloonsPopped;
-            const interacted = cashed + popped;
-            const successRate = (cashed / colorTotalBalloons) * 100;
-            const avgPumps = interacted > 0 ? colorStats.totalPumps / interacted : 0;
-
-            labelElement.textContent = `${color.name} Balloons (${riskProfileLabel})`;
-            successRateElement.textContent = `${successRate.toFixed(1)}%`;
-            avgPumpsElement.textContent = avgPumps.toFixed(1);
-        } else {
-            labelElement.textContent = `${color.name} Balloons (${riskProfileLabel})`;
-            successRateElement.textContent = 'N/A';
-            avgPumpsElement.textContent = 'N/A';
-        }
-        // Set background color dynamically
-        statElement.style.backgroundColor = hexToRgba(color.hex, 0.9); // Use helper for transparency
+        
+        const colorTotalBalloons = colorStats.balloonCount;
+        const cashed = colorStats.balloonsCashed;
+        const popped = colorStats.balloonsPopped;
+        const interacted = cashed + popped;
+        
+        // Calculate statistics
+        const successRate = colorTotalBalloons > 0 ? (cashed / colorTotalBalloons) * 100 : 0;
+        const avgPumps = interacted > 0 ? colorStats.totalPumps / interacted : 0;
+        
+        // Create stat card
+        const statCard = document.createElement('div');
+        statCard.className = 'color-stat';
+        statCard.style.backgroundColor = hexToRgba(color.hex, 0.9);
+        
+        statCard.innerHTML = `
+            <div class="color-label">${color.name} Balloons (${riskProfileLabel})</div>
+            <div>Success Rate: <span class="color-success-rate">${successRate.toFixed(1)}%</span></div>
+            <div>Average Pumps: <span class="color-avg-pumps">${avgPumps.toFixed(1)}</span></div>
+        `;
+        
+        elements.colorStats.appendChild(statCard);
     });
 }
-
-// Helper to convert hex to rgba for background transparency
-function hexToRgba(hex, alpha = 1) {
-    hex = hex.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
 
 function generateRiskAssessment() {
     let assessment = '';
@@ -419,33 +449,4 @@ function generateRiskAssessment() {
     } else if ((cautiousWithHigh && aggressiveWithLow) || (cautiousWithHigh && adaptedMedium && (mediumRiskStats?.balloonCount > 0)) || (aggressiveWithLow && adaptedMedium && (mediumRiskStats?.balloonCount > 0)) ) {
          assessment = `Good risk adaptation! You showed clear awareness of different risk levels (e.g., cautious with ${highRiskColor}, bolder with ${lowRiskColor}). Refining your approach for the medium-risk ${mediumRiskColor} balloons could improve your score further.`;
     } else if (cautiousWithHigh || aggressiveWithLow) {
-        assessment = `Partial risk adaptation. You seem to have identified either the high-risk ${highRiskColor} balloons or the low-risk ${lowRiskColor} balloons, but didn't consistently adjust your strategy across all discovered risk levels.`;
-    } else if (overallSuccessRate > 60) {
-        assessment = `You achieved a respectable score! However, your pumping strategy (avg ${avgPumpsHigh.toFixed(1)}/${avgPumpsMedium.toFixed(1)}/${avgPumpsLow.toFixed(1)} pumps for ${highRiskColor}/${mediumRiskColor}/${lowRiskColor}) didn't strongly vary based on the hidden risk levels. Experimenting more might reveal the patterns!`;
-    } else {
-        assessment = `It seems you used a similar approach for most balloons. The key to maximizing your score is figuring out which color is safe to pump many times (${lowRiskColor} this game) and which is risky (${highRiskColor} this game). Keep trying to spot the pattern!`;
-    }
-
-    elements.riskAssessment.textContent = assessment;
-}
-
-
-function resetGame() {
-    // Reset state, re-randomize colors/risks, generate new sequence
-    initializeGame();
-    // Start the game flow
-    startGame();
-}
-
-function changeScreen(screenName) {
-    gameState.currentScreen = screenName;
-    // Hide all screens
-    for (const screenKey in screens) {
-        screens[screenKey].classList.add('hidden');
-    }
-    // Show current screen
-    screens[screenName].classList.remove('hidden');
-}
-
-// Initialize the game setup when the script loads
-initializeGame();
+        assessment = `Partial risk adaptation. You seem to have identified either the high-risk ${highRiskColor} balloons 
