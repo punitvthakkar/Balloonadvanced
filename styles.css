@@ -1,0 +1,250 @@
+/* General Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f0f8ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.screen {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #3498db;
+    margin: 15px 0;
+}
+
+p, ul {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    color: #555;
+}
+
+ul {
+    text-align: left;
+    padding-left: 30px;
+}
+
+.action-button {
+    background-color: #3498db;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 30px;
+    margin: 10px;
+    transition: all 0.3s;
+}
+
+.action-button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+.action-button:active {
+    transform: scale(0.98);
+}
+
+/* Welcome Screen Styles */
+.balloon-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.instructions {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.color-hint {
+    font-weight: bold;
+}
+
+.red-text { color: #e74c3c; }
+.blue-text { color: #3498db; }
+.green-text { color: #2ecc71; }
+
+/* Game Screen Styles */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.balloon-count, .score-display {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-weight: bold;
+}
+
+.balloon-area {
+    position: relative;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.balloon {
+    width: 100px;
+    height: 120px;
+    background-color: #3498db; /* Default color */
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.balloon:before {
+    content: '';
+    width: 10px;
+    height: 25px;
+    background-color: inherit;
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* Balloon colors */
+.balloon.red {
+    background-color: #e74c3c;
+}
+
+.balloon.blue {
+    background-color: #3498db;
+}
+
+.balloon.green {
+    background-color: #2ecc71;
+}
+
+.pop-effect {
+    position: absolute;
+    color: #e74c3c;
+    font-size: 60px;
+    font-weight: bold;
+    animation: popAnimation 0.5s forwards;
+}
+
+@keyframes popAnimation {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+.current-points {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Results Screen Styles */
+.final-score {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 20px 0;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    display: inline-block;
+}
+
+.stats-container {
+    margin: 30px 0;
+}
+
+.overall-stats {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.color-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.color-stat {
+    flex: 1;
+    min-width: 200px;
+    border-radius: 10px;
+    padding: 15px;
+    color: white;
+}
+
+.red-bg {
+    background-color: rgba(231, 76, 60, 0.9);
+}
+
+.blue-bg {
+    background-color: rgba(52, 152, 219, 0.9);
+}
+
+.green-bg {
+    background-color: rgba(46, 204, 113, 0.9);
+}
+
+.color-label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.assessment {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+@media screen and (max-width: 600px) {
+    .color-stats {
+        flex-direction: column;
+    }
+}
